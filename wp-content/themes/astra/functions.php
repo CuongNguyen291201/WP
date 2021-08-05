@@ -180,13 +180,59 @@ function load_js_assets() {
     if( is_page( 191 ) ) {
         wp_enqueue_script('get-data', 'http://localhost/landing-page/get-data.js', array('jquery'), '', false);
 		
-		wp_localize_script( 'get-data', 'php_data', array(
-			'message' => $data
-			)
+		$argPosts = array(
+			'category' => 0
 		);
+
+		$posts = get_posts($argPosts);
+
+		// $argCategories = array(
+		// 	'type'      => 'post',
+		// 	'child_of'  => 0,
+		// 	'parent'    => '',
+		// 	'order_by' 	=> 'IELTS'
+		// );
+		// $categories = get_categories( $argCategories );
+
+		$category = get_category_by_slug( 'ielts' );
+
+		$args = array(
+		'type'                     => 'post',
+		'child_of'                 => $category->term_id,
+		'orderby'                  => 'name',
+		'order'                    => 'ASC',
+		'hide_empty'               => FALSE,
+		'hierarchical'             => 1,
+		'taxonomy'                 => 'category',
+		); 
+		$child_categories = get_categories($args );
+
+		wp_localize_script( 'get-data', 'php_data', array(
+			'posts' => $posts,
+			'child_categories' => $child_categories
+		));
     } 
 }
 
 add_action('wp_enqueue_scripts', 'load_js_assets');
 
+function getpost_by_id() {
+	header("Content-Type: application/json", true);
+	$cat_id = $_POST['cat_id'];
+	
+	// $argPost = array(
+	// 	'category'	=> $cat_id
+	// );
+	// $post = get_posts($argPost);
+	
+	$query = new WP_Query( array( 
+		'post_type' => 'page',	
+		'cat' => $cat_id
+	));
 
+	wp_send_json($query->posts);
+	die();
+}
+
+add_action('wp_ajax_getpost', 'getpost_by_id');
+add_action('wp_ajax_nopriv_getpost', 'getpost_by_id');
