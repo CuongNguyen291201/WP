@@ -178,7 +178,7 @@ function load_js_assets() {
 	$data = json_decode($res);
 
     if( is_page( 191 ) ) {
-        wp_enqueue_script('get-data', 'http://localhost/landing-page/get-data.js', array('jquery'), '', false);
+        wp_enqueue_script('get-data', 'http://103.226.248.62:3000/get-data.js', array('jquery'), '', false);
 		
 		$argPosts = array(
 			'category' => 0
