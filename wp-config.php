@@ -1,6 +1,6 @@
 <?php
 define('WP_HOME','http://103.226.248.62:3000');
-define('WP_SITEURL','http://103.226.248.62:3000/');
+define('WP_SITEURL','http://103.226.248.62:3000');
 /**
  * The base configuration for WordPress
  *
