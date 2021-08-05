@@ -28,7 +28,7 @@ define( 'DB_NAME', 'wordpress' );
 define( 'DB_USER', 'wpadmin' );
 
 /** MySQL database password */
-define( 'DB_PASSWORD', 'Koolsoft2021' );
+define( 'DB_PASSWORD', 'Koolsoft2021$' );
 
 /** MySQL hostname */
 define( 'DB_HOST', '103.226.248.62' );
