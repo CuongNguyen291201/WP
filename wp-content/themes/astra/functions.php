@@ -174,45 +174,89 @@ require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-hooks.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
 
 function load_js_assets() {
-	$res = wp_remote_retrieve_body( wp_remote_get('https://jsonplaceholder.typicode.com/users?_limit=8'));
-	$data = json_decode($res);
+	wp_enqueue_style( 'style', 'http://localhost/landing-page/style.css');
+	wp_enqueue_script('get-data', 'http://localhost/landing-page/get-data.js', array('jquery'), '', false);
 
-    if( is_page( 191 ) ) {
-        wp_enqueue_script('get-data', 'http://103.226.248.62:3000/get-data.js', array('jquery'), '', false);
-		
-		$argPosts = array(
-			'category' => 0
-		);
+	// Lấy slug theo từng page, lấy đường dẫn current page
+	global $post, $wp;
+    $post_slug = $post->post_name;
+	$home_url = home_url($wp->request);
 
-		$posts = get_posts($argPosts);
+	// Lấy các page default
+	$query = new WP_Query( array( 
+		'post_type' => 'page',
+		'cat' => 8
+	));
+	$pages = $query->posts; 
 
-		// $argCategories = array(
-		// 	'type'      => 'post',
-		// 	'child_of'  => 0,
-		// 	'parent'    => '',
-		// 	'order_by' 	=> 'IELTS'
-		// );
-		// $categories = get_categories( $argCategories );
+	// Lấy các post theo trang hiện tại
+	$category_by_slug = get_category_by_slug( $post_slug );
+	$argPost = array(
+		'category'	=> $category_by_slug->term_id,
+		'posts_per_page' => 4,
+		// 'paged' => 2
+	);
+	$post_by_page = get_posts($argPost);
 
-		$category = get_category_by_slug( 'ielts' );
-
-		$args = array(
-		'type'                     => 'post',
+	// Lấy các danh mục
+	$category = get_category_by_slug( 'ielts' );
+	$args = array(
+		// 'type'                     => 'post',
 		'child_of'                 => $category->term_id,
 		'orderby'                  => 'name',
 		'order'                    => 'ASC',
 		'hide_empty'               => FALSE,
 		'hierarchical'             => 1,
 		'taxonomy'                 => 'category',
-		); 
-		$child_categories = get_categories($args );
+	); 
+	$child_categories = get_categories( $args );
 
-		wp_localize_script( 'get-data', 'php_data', array(
-			'posts' => $posts,
-			'child_categories' => $child_categories
-		));
-    } 
-}
+
+	// Call api Khoá học
+	$url = 'https://test24h.vn:1443/api/all-categories';
+	$body_categories = array(
+		"limitCourses" => 6,
+	);
+	$args_categories = array(
+        'method'      => 'POST',
+        'timeout'     => 45,
+        'sslverify'   => false,
+        'headers'     => array(
+            'Authorization' => 'Bearer {token goes here}',
+            'Content-Type'  => 'application/json',
+        ),
+        'body'        => json_encode($body_categories),
+    );
+	$categories = wp_remote_retrieve_body( wp_remote_post( $url, $args_categories ) );
+
+	
+	// Post and pagination
+	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+	$args = array(
+		'posts_per_page' => 2,
+		'cat'	=> $category_by_slug->term_id,
+		// 'order'=> 'ASC',
+		'paged'=> $paged,
+		'post_type' => 'post'
+	);
+	$projects = new WP_Query($args);
+
+	// Post Default Luyện thi IELTS online cùng Test24h
+	$posts_ielts_online = new WP_Query( array( 
+		'post_type' => 'post',	
+		'cat' => 31
+	));
+
+	wp_localize_script( 'get-data', 'php_data', array(
+		'pages' => $pages,
+		'child_categories' => $child_categories,
+		'categories' => $categories,
+		'posts' => $post_by_page,
+		'paged' =>	$projects,
+		'home_url' => $home_url,
+		'posts_ielts_online' => $posts_ielts_online->posts
+	));
+} 
 
 add_action('wp_enqueue_scripts', 'load_js_assets');
 
@@ -236,3 +280,49 @@ function getpost_by_id() {
 
 add_action('wp_ajax_getpost', 'getpost_by_id');
 add_action('wp_ajax_nopriv_getpost', 'getpost_by_id');
+
+
+function getpostbycategorychild_by_id() {
+	header("Content-Type: application/json", true);
+	$cat_id = $_POST['cat_id'];
+	
+	$query = new WP_Query( array( 
+		'post_type' => 'post',	
+		'cat' => $cat_id
+	));
+
+	wp_send_json($query->posts);
+	die();
+}
+
+add_action('wp_ajax_getpostbycategorychild', 'getpostbycategorychild_by_id');
+add_action('wp_ajax_nopriv_getpostbycategorychild', 'getpostbycategorychild_by_id');
+
+
+// function getcourses_by_category() {
+// 	header("Content-Type: application/json", true);
+// 	$slugs = $_POST['slug_category'];
+
+// 	$url  = 'https://test24h.vn:1443/api/all-categories';
+//     $body = array(
+// 		"limitCourses" => 3,
+//     	"slugs" => $slugs
+// 	);
+
+//     $args = array(
+//         'method'      => 'POST',
+//         'timeout'     => 45,
+//         'sslverify'   => false,
+//         'headers'     => array(
+//             'Authorization' => 'Bearer {token goes here}',
+//             'Content-Type'  => 'application/json',
+//         ),
+//         'body'        => json_encode($body),
+//     );
+// 	$request = wp_remote_post( $url, $args );
+// 	wp_send_json($request);
+// 	die();
+// }
+
+// add_action('wp_ajax_getcourses', 'getcourses_by_category');
+// add_action('wp_ajax_nopriv_getcourses', 'getcourses_by_category');
