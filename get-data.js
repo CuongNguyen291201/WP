@@ -26,8 +26,8 @@ jQuery(document).ready(function($) {
             $.ajax({
                 type: "post",
                 dataType: "json",
-                url : "http://localhost/landing-page/wp-admin/admin-ajax.php ",
-                // url : "http://103.226.248.62:3000/wp-admin/admin-ajax.php ",
+                // url : "http://localhost/landing-page/wp-admin/admin-ajax.php ",
+                url : "http://103.226.248.62:3000/wp-admin/admin-ajax.php ",
                 data: {
                     action: "getpost",
                     cat_id: cat_id
@@ -80,7 +80,7 @@ jQuery(document).ready(function($) {
     $(".courses-option").append(
         `
         <div class="course-1">
-            <div class="course course-ielts" data="ielts">
+            <div class="course course-ielts" data="ielts" tabindex="0">
                 KHÓA HỌC IELTS
             </div>
         </div>
@@ -94,12 +94,12 @@ jQuery(document).ready(function($) {
             </div>
 
             <div class="collapse" id="collapse1" data="1">
-                <div class="card name-course-child">
+                <div class="card name-course-child" tabindex="10">
                     <div class="course course-sat-1" data="sat-1">
                         KHÓA HỌC SAT 1
                     </div>
                 </div>
-                <div class="card name-course-child">
+                <div class="card name-course-child" tabindex="11">
                     <div class="course course-sat-2" data="sat-2">
                         KHÓA HỌC SAT 2
                     </div>
@@ -108,8 +108,6 @@ jQuery(document).ready(function($) {
         </div>
         `
     );
-
-
 
 
 
@@ -150,7 +148,7 @@ jQuery(document).ready(function($) {
     });
 
 
-    // Post Luyện thi IELTS online cùng Test24h
+    // Category Luyện thi IELTS online cùng Test24h
     
     let only_childs = php_data.child_categories.filter(item => item.category_parent === 1);
     let only_grandchilds = php_data.child_categories.filter(item => item.category_parent != 1);
@@ -170,7 +168,7 @@ jQuery(document).ready(function($) {
                         </div>
         
                         <div class="collapse" id="collapse${item.cat_ID}" data="${item.cat_ID}">
-                            <div class="card card-body name-cate-child-${item_gc.cat_ID}">${item_gc.cat_name}</div>
+                            <div class="card card-body name-cate-child-${item_gc.cat_ID}" tabindex="${item.cat_ID}">${item_gc.cat_name}</div>
                         </div>
                     </div>
                     `
@@ -203,13 +201,15 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // Post theo Category
 
     php_data.posts_ielts_online.map((item, index) => {
         $('.posts-ielts-online').append(
             `
                 <div class="post-item-ielts-online">
                     <a href="${item.guid}">
-                        ${item.post_content}
+                        <img src="https://storage.googleapis.com/ielts-fighters.appspot.com/elearning-react/2021/06/10/62934497.png" />
+                        <p>${item.post_title}</p>
                     </a>
                 </div>
             `
@@ -221,8 +221,8 @@ jQuery(document).ready(function($) {
             $.ajax({
                 type: "post",
                 dataType: "json",
-                url : "http://localhost/landing-page/wp-admin/admin-ajax.php ",
-                // url : "http://103.226.248.62:3000/wp-admin/admin-ajax.php ",
+                // url : "http://localhost/landing-page/wp-admin/admin-ajax.php ",
+                url : "http://103.226.248.62:3000/wp-admin/admin-ajax.php ",
                 data: {
                     action: "getpostbycategorychild",
                     cat_id: item.cat_ID
@@ -246,7 +246,8 @@ jQuery(document).ready(function($) {
                             `
                                 <div class="post-item-ielts-online">
                                     <a href="${item.guid}">
-                                        ${item.post_content}
+                                        <img src="https://storage.googleapis.com/ielts-fighters.appspot.com/elearning-react/2021/06/10/62934497.png" />
+                                        <p>${item.post_title}</p>
                                     </a>
                                 </div>
                             `
@@ -272,7 +273,8 @@ jQuery(document).ready(function($) {
                     <div class="post-item-ielts-listening">
                         <p class="post-item-name">${item.post_title}</p>
                         <div class="post-item-desc">
-                            ${item.post_content}
+                            <img src="https://koolsft.000webhostapp.com/wp-content/uploads/2021/08/Rectangle-264-1.jpg" />
+                            <p>${item.post_title}</p>
                         </div>
                         <a href="${item.guid}" class="post-item-read-more">Chi tiết</a>
                     </div>
@@ -284,16 +286,28 @@ jQuery(document).ready(function($) {
     getPosts(php_data.posts, 'recent-posts');
     getPosts(php_data.paged.posts, 'post-ielts-listening');
 
+    // Pagination IELTS Listening
+
     let site = php_data.home_url;
     let num_page = +site[site.length - 1];
     isNaN(num_page) ? num_page = 1 : num_page = site[site.length - 1]
 
     $('.post-pagination').append(
+        // `
+        //     ${ +num_page === 1 ? '' : `<a href="http://localhost/landing-page/ielts-listening/page/${+num_page - 1}" class="post-prev"><i class="fas fa-angle-left"></i> Prev</a>`}
+        //     <p class="number-page">${num_page}</p>
+        //     ${ +num_page === php_data.paged.max_num_pages ? '' : `<a href="http://localhost/landing-page/ielts-listening/page/${+num_page + 1}" class="post-next">Next <i class="fas fa-angle-right"></i></a>`}
+
+        // `
+
         `
-            ${ +num_page === 1 ? '' : `<a href="http://localhost/landing-page/ielts-listening/page/${+num_page - 1}" class="post-prev"><i class="fas fa-angle-left"></i> Prev</a>`}
+            ${ +num_page === 1 ? '' : `<a href="http://103.226.248.62:3000/ielts-listening/page/${+num_page - 1}" class="post-prev"><i class="fas fa-angle-left"></i> Prev</a>`}
             <p class="number-page">${num_page}</p>
-            ${ +num_page === php_data.paged.max_num_pages ? '' : `<a href="http://localhost/landing-page/ielts-listening/page/${+num_page + 1}" class="post-next">Next <i class="fas fa-angle-right"></i></a>`}
+            ${ +num_page === php_data.paged.max_num_pages ? '' : `<a href="http://103.226.248.62:3000/ielts-listening/page/${+num_page + 1}" class="post-next">Next <i class="fas fa-angle-right"></i></a>`}
 
         `
     );
+
+    // Posts được xem nhiều nhất
+
 });

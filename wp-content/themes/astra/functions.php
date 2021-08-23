@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define Constants
  */
-define( 'ASTRA_THEME_VERSION', '3.6.5' );
+define( 'ASTRA_THEME_VERSION', '3.6.8' );
 define( 'ASTRA_THEME_SETTINGS', 'astra-settings' );
 define( 'ASTRA_THEME_DIR', trailingslashit( get_template_directory() ) );
 define( 'ASTRA_THEME_URI', trailingslashit( esc_url( get_template_directory_uri() ) ) );
@@ -25,7 +25,7 @@ define( 'ASTRA_THEME_URI', trailingslashit( esc_url( get_template_directory_uri(
  * Minimum Version requirement of the Astra Pro addon.
  * This constant will be used to display the notice asking user to update the Astra addon to the version defined below.
  */
-define( 'ASTRA_EXT_MIN_VER', '3.5.5' );
+define( 'ASTRA_EXT_MIN_VER', '3.5.8' );
 
 /**
  * Setup helper functions of Astra.
@@ -108,7 +108,7 @@ if ( is_admin() ) {
 	 * Admin Menu Settings
 	 */
 	require_once ASTRA_THEME_DIR . 'inc/core/class-astra-admin-settings.php';
-	require_once ASTRA_THEME_DIR . 'inc/lib/notices/class-astra-notices.php';
+	require_once ASTRA_THEME_DIR . 'inc/lib/astra-notices/class-astra-notices.php';
 
 	/**
 	 * Metabox additions.
@@ -174,8 +174,14 @@ require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-hooks.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
 
 function load_js_assets() {
-	wp_enqueue_style( 'style', 'http://localhost/landing-page/style.css');
-	wp_enqueue_script('get-data', 'http://localhost/landing-page/get-data.js', array('jquery'), '', false);
+	// wp_enqueue_style( 'style', 'http://localhost/landing-page/style.css');
+	// wp_enqueue_script('get-data', 'http://localhost/landing-page/get-data.js', array('jquery'), '', false);
+
+	wp_enqueue_style( 'style', 'http://103.226.248.62:3000/style.css');
+	wp_enqueue_script('get-data', 'http://103.226.248.62:3000/get-data.js', array('jquery'), '', false);
+
+	wp_enqueue_style( 'bs_css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css');
+	wp_enqueue_script( 'bs_script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js');
 
 	// Lấy slug theo từng page, lấy đường dẫn current page
 	global $post, $wp;
@@ -247,6 +253,14 @@ function load_js_assets() {
 		'cat' => 31
 	));
 
+	$view_posts = new WP_Query( array(
+		'post_type' => 'post',
+		'posts_per_page' => 4, 
+		'meta_key' => 'post_count_view', 
+		'orderby'=> 'meta_value_num', 
+		'order' => 'DESC'
+	));
+
 	wp_localize_script( 'get-data', 'php_data', array(
 		'pages' => $pages,
 		'child_categories' => $child_categories,
@@ -254,7 +268,8 @@ function load_js_assets() {
 		'posts' => $post_by_page,
 		'paged' =>	$projects,
 		'home_url' => $home_url,
-		'posts_ielts_online' => $posts_ielts_online->posts
+		'posts_ielts_online' => $posts_ielts_online->posts, 
+		'view_posts' => $view_posts
 	));
 } 
 
