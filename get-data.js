@@ -161,14 +161,20 @@ jQuery(document).ready(function($) {
                 $(".test-category").append(
                     `
                     <div class="category-${item.cat_ID}">
-                        <div class="category-child category-child-${item.cat_ID}" type="button" 
-                            data-bs-toggle="collapse" data-bs-target="#collapse${item.cat_ID}" 
-                            aria-expanded="false" aria-controls="collapse${item.cat_ID}">
-                            ${item.cat_name} <i class="fas fa-chevron-down"></i>
+                        <div class="d-flex justify-content-between align-items-center category-child category-child-${item.cat_ID}">
+                            <a href="${php_data.url}/${item.slug}">${item.cat_name}</a>
+                            <div class="category-child category-child-${item.cat_ID}" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#collapse${item.cat_ID}" 
+                                aria-expanded="false" aria-controls="collapse${item.cat_ID}">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
                         </div>
         
                         <div class="collapse" id="collapse${item.cat_ID}" data="${item.cat_ID}">
-                            <div class="card card-body name-cate-child-${item_gc.cat_ID}" tabindex="${item.cat_ID}">${item_gc.cat_name}</div>
+                            <div class="d-flex justify-content-between align-items-center card-body category-grandchild">
+                                <a href="${php_data.url}/${item_gc.slug}">${item_gc.cat_name}</a>
+                                <div class="name-cate-child-${item_gc.cat_ID}" tabindex="${item.cat_ID}"><i class="fas fa-chevron-right"></i></div>
+                            </div>
                         </div>
                     </div>
                     `
@@ -188,12 +194,19 @@ jQuery(document).ready(function($) {
         }
         if (check===1) {
             $(".test-category").append(
+                // `
+                // <div class="category-${only_childs[j].cat_ID}">
+                //     <div class="category-child category-child-${only_childs[j].cat_ID}" type="button" 
+                //         data-bs-toggle="collapse" data-bs-target="#collapse${only_childs[j].cat_ID}" 
+                //         aria-expanded="false" aria-controls="collapse${only_childs[j].cat_ID}">
+                //         <a href="${php_data.url}/${only_childs[j].slug}">${only_childs[j].cat_name}</a>
+                //     </div>
+                // </div>
+                // `
                 `
                 <div class="category-${only_childs[j].cat_ID}">
-                    <div class="category-child category-child-${only_childs[j].cat_ID}" type="button" 
-                        data-bs-toggle="collapse" data-bs-target="#collapse${only_childs[j].cat_ID}" 
-                        aria-expanded="false" aria-controls="collapse${only_childs[j].cat_ID}">
-                        ${only_childs[j].cat_name} 
+                    <div class="category-child category-child-${only_childs[j].cat_ID}">
+                        <a href="${php_data.url}/${only_childs[j].slug}">${only_childs[j].cat_name}</a>
                     </div>
                 </div>
                 `
@@ -203,18 +216,33 @@ jQuery(document).ready(function($) {
 
     // Post theo Category
 
-    php_data.posts_ielts_online.map((item, index) => {
-        $('.posts-ielts-online').append(
-            `
-                <div class="post-item-ielts-online">
-                    <a href="${item.guid}">
-                        <img src="https://storage.googleapis.com/ielts-fighters.appspot.com/elearning-react/2021/06/10/62934497.png" />
-                        <p>${item.post_title}</p>
-                    </a>
-                </div>
-            `
-        );
-    })
+    if (php_data.slug != "test24h") {
+        php_data.posts.map((item, index) => {
+            $('.posts-ielts-online').append(
+                `
+                    <div class="post-item-ielts-online">
+                        <a href="${item.guid}">
+                            <img src="https://storage.googleapis.com/ielts-fighters.appspot.com/elearning-react/2021/06/10/62934497.png" />
+                            <p>${item.post_title}</p>
+                        </a>
+                    </div>
+                `
+            );
+        })
+    } else {
+        php_data.posts_ielts_online.map((item, index) => {
+            $('.posts-ielts-online').append(
+                `
+                    <div class="post-item-ielts-online">
+                        <a href="${item.guid}">
+                            <img src="https://storage.googleapis.com/ielts-fighters.appspot.com/elearning-react/2021/06/10/62934497.png" />
+                            <p>${item.post_title}</p>
+                        </a>
+                    </div>
+                `
+            );
+        })
+    }
 
     only_grandchilds.map((item, index) => {
         $(`.name-cate-child-${item.cat_ID}`).click(function(){  

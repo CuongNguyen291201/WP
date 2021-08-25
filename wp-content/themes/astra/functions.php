@@ -187,6 +187,7 @@ function load_js_assets() {
 	global $post, $wp;
     $post_slug = $post->post_name;
 	$home_url = home_url($wp->request);
+	$site_url = home_url();
 
 	// Lấy các page default
 	$query = new WP_Query( array( 
@@ -199,7 +200,7 @@ function load_js_assets() {
 	$category_by_slug = get_category_by_slug( $post_slug );
 	$argPost = array(
 		'category'	=> $category_by_slug->term_id,
-		'posts_per_page' => 4,
+		'posts_per_page' => 12,
 		// 'paged' => 2
 	);
 	$post_by_page = get_posts($argPost);
@@ -269,7 +270,9 @@ function load_js_assets() {
 		'paged' =>	$projects,
 		'home_url' => $home_url,
 		'posts_ielts_online' => $posts_ielts_online->posts, 
-		'view_posts' => $view_posts
+		'view_posts' => $view_posts,
+		'slug' => $post_slug,
+		'url' => $site_url
 	));
 } 
 

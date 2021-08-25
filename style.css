@@ -11,7 +11,7 @@ a {
 }
 
 .card-body {
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 1.5rem !important;
 }
 
 .categories-course {
@@ -397,6 +397,22 @@ textarea {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.category-child a {
+    color: #000000;
+}
+
+.category-child a:hover {
+    color: #FF9200;
+}
+
+.category-grandchild a {
+    color: #000000;
+}
+
+.category-grandchild a:hover {
+    color: #FF9200;
 }
 
 .test-category {
