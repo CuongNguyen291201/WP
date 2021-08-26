@@ -215,8 +215,9 @@ jQuery(document).ready(function($) {
     }
 
     // Post theo Category
+    let isFrontPage = +php_data.front_page;
 
-    if (php_data.slug != "test24h") {
+    if (isFrontPage != 1) {
         php_data.posts.map((item, index) => {
             $('.posts-ielts-online').append(
                 `

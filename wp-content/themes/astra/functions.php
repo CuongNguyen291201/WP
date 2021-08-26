@@ -262,6 +262,9 @@ function load_js_assets() {
 		'order' => 'DESC'
 	));
 
+	// Front page
+	is_front_page() ? $is_front_page = true : $is_front_page = false;
+
 	wp_localize_script( 'get-data', 'php_data', array(
 		'pages' => $pages,
 		'child_categories' => $child_categories,
@@ -272,7 +275,8 @@ function load_js_assets() {
 		'posts_ielts_online' => $posts_ielts_online->posts, 
 		'view_posts' => $view_posts,
 		'slug' => $post_slug,
-		'url' => $site_url
+		'url' => $site_url,
+		'front_page' => $is_front_page
 	));
 } 
 
